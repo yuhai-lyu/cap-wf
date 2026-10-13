@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@cap-js/hana": "^2",
+    "@cap-js/process": "^0.2.1",
     "@sap/cds": "^9.8.0",
     "@sap/xssec": "^4.15.0",
     "axios": "^1.20.0",
@@ -20,6 +21,7 @@
   },
   "devDependencies": {
     "@cap-js/sqlite": "^2",
+    "@sap/cds-dk": "^9",
     "sqlite3": "^5.1.7"
   },
   "workspaces": [
