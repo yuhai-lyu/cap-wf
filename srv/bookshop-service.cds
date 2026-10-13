@@ -6,5 +6,6 @@ service BookShopService {
   entity Books  as projection on db.Books;
   entity Orders as projection on db.Orders;
 
-
+  action approveOrder(orderID: UUID) returns Orders;
+  action rejectOrder(orderID: UUID) returns Orders;
 }
