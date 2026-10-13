@@ -1,0 +1,19 @@
+<mvc:View controllerName="sap.cap.demo.bookshop.controller.Order" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">
+  <Page title="Create order" showNavButton="true" navButtonPress=".onBack">
+    <content>
+      <VBox class="sapUiSmallMargin">
+        <Input id="customerName" placeholder="Customer name" required="true" />
+        <Input id="customerEmail" type="Email" placeholder="Customer email" required="true" class="sapUiSmallMarginTop" />
+        <Table items="{app>/selectedBooks}" class="sapUiSmallMarginTop">
+          <columns><Column><Text text="Book" /></Column><Column hAlign="End"><Text text="Quantity" /></Column><Column hAlign="End"><Text text="Stock" /></Column></columns>
+          <items><ColumnListItem><cells>
+            <Text text="{app>title}" />
+            <StepInput value="{app>quantity}" min="1" max="{app>stock}" step="1" width="8rem" />
+            <Text text="{app>stock}" />
+          </cells></ColumnListItem></items>
+        </Table>
+        <Button text="Submit order" type="Emphasized" press=".onSubmit" class="sapUiSmallMarginTop" />
+      </VBox>
+    </content>
+  </Page>
+</mvc:View>

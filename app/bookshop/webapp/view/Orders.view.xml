@@ -1,0 +1,12 @@
+<mvc:View controllerName="sap.cap.demo.bookshop.controller.Orders" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">
+  <Page title="Orders" showNavButton="true" navButtonPress=".onBack">
+    <content>
+      <Table items="{path: '/Orders', parameters: { $expand: 'items($expand=book)' }}" growing="true">
+        <columns><Column><Text text="Customer" /></Column><Column><Text text="Email" /></Column><Column><Text text="Status" /></Column><Column><Text text="Created" /></Column></columns>
+        <items><ColumnListItem type="Active">
+          <cells><Text text="{customerName}" /><Text text="{customerEmail}" /><ObjectStatus text="{status}" state="{= ${status} === 'forApproval' ? 'Warning' : 'Success'}" /><Text text="{createdAt}" /></cells>
+        </ColumnListItem></items>
+      </Table>
+    </content>
+  </Page>
+</mvc:View>

@@ -1,0 +1,52 @@
+{
+  "name": "bookshop-workflow",
+  "version": "1.0.0",
+  "private": true,
+  "description": "BookShop CAP service with SAP Build Process Automation integration",
+  "scripts": {
+    "start": "cds-serve",
+    "watch": "cds watch",
+    "watch-bookshop": "cds watch --open sap.cap.demo.bookshop/index.html?sap-ui-xx-viewCache=false --livereload false"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@cap-js/hana": "^2",
+    "@sap/cds": "^9.8.0",
+    "@sap/xssec": "^4.15.0",
+    "axios": "^1.20.0",
+    "cds-plugin-ui5": "^0.17.4"
+  },
+  "devDependencies": {
+    "@cap-js/sqlite": "^2",
+    "sqlite3": "^5.1.7"
+  },
+  "workspaces": [
+    "app/*"
+  ],
+  "sapux": [
+    "app/bookshop"
+  ],
+  "cds": {
+    "requires": {
+      "[development]": {
+        "db": {
+          "kind": "sqlite",
+          "credentials": {
+            "url": "db.sqlite"
+          }
+        }
+      },
+      "[production]": {
+        "db": {
+          "kind": "hana",
+          "deploy-format": "hdbtable"
+        },
+        "auth": {
+          "kind": "mocked"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,9 @@
+node_modules/
+app/*/node_modules/
+.vscode/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+.env
+default-env.json
+db.session.sql

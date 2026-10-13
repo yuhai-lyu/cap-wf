@@ -1,0 +1,32 @@
+<mvc:View controllerName="sap.cap.demo.bookshop.controller.Books" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">
+  <Page title="Books">
+    <customHeader>
+      <Toolbar>
+        <Title text="Bookshop" />
+        <ToolbarSpacer />
+        <Button text="Orders" icon="sap-icon://sales-order" press=".onOrders" />
+      </Toolbar>
+    </customHeader>
+    <content>
+      <Table id="booksTable" mode="MultiSelect" items="{path: '/Books'}" growing="true" growingScrollToLoad="true" noDataText="No books available">
+        <headerToolbar><Toolbar><Title text="Available books" /><ToolbarSpacer /><Button text="Order" type="Emphasized" press=".onOrder" /></Toolbar></headerToolbar>
+        <columns>
+          <Column><Text text="Title" /></Column>
+          <Column><Text text="Author" /></Column>
+          <Column hAlign="End"><Text text="Price" /></Column>
+          <Column hAlign="End"><Text text="Stock" /></Column>
+        </columns>
+        <items>
+          <ColumnListItem>
+            <cells>
+              <ObjectIdentifier title="{title}" />
+              <Text text="{author}" />
+              <ObjectNumber number="{price}" unit="EUR" />
+              <ObjectNumber number="{stock}" state="{= ${stock} > 0 ? 'Success' : 'Error'}" />
+            </cells>
+          </ColumnListItem>
+        </items>
+      </Table>
+    </content>
+  </Page>
+</mvc:View>

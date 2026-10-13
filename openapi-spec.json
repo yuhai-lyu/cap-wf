@@ -1,0 +1,365 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "Trigger Process via API Trigger",
+        "version": "1.0.0"
+    },
+    "externalDocs": {
+        "description": "SAP Build Process Automation Workflow APIs",
+        "url": "https://api.sap.com/api/SPA_Workflow_Runtime/resource/"
+    },
+    "servers": [
+        {
+            "url": "https://spa-api-gateway-bpi-us-prod.cfapps.us10.hana.ondemand.com"
+        }
+    ],
+    "components": {
+        "schemas": {
+            "TechnicalError": {
+                "type": "object",
+                "properties": {
+                    "error": {
+                        "type": "object",
+                        "properties": {
+                            "code": {
+                                "type": "string",
+                                "description": "The error category."
+                            },
+                            "message": {
+                                "type": "string",
+                                "description": "The error message."
+                            },
+                            "logId": {
+                                "type": "string",
+                                "description": "The log ID referring to the error."
+                            },
+                            "details": {
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "severity": {
+                                            "type": "string",
+                                            "description": "The severity of the error."
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "description": "The detailed error message."
+                                        }
+                                    }
+                                },
+                                "type": "array"
+                            }
+                        },
+                        "required": [
+                            "message"
+                        ]
+                    }
+                }
+            },
+            "UnauthorizedError": {
+                "type": "object",
+                "properties": {
+                    "error": {
+                        "type": "string",
+                        "description": "The error name."
+                    },
+                    "error_description": {
+                        "type": "string",
+                        "description": "The error description."
+                    }
+                },
+                "required": [
+                    "error",
+                    "error_description"
+                ]
+            },
+            "ConflictError": {
+                "type": "object",
+                "properties": {
+                    "error": {
+                        "type": "object",
+                        "properties": {
+                            "message": {
+                                "type": "string",
+                                "description": "The error message."
+                            },
+                            "logId": {
+                                "type": "string",
+                                "description": "The log ID referring to the error."
+                            }
+                        },
+                        "required": [
+                            "message"
+                        ]
+                    }
+                }
+            },
+            "WorkflowInstance": {
+                "type": "object",
+                "properties": {
+                    "definitionId": {
+                        "type": "string",
+                        "description": "The ID of the workflow definition for which the instance was started. The ID is at most 255 characters long.",
+                        "maxLength": 255
+                    },
+                    "definitionVersion": {
+                        "type": "string",
+                        "description": "The version of the workflow definition for which the instance was started."
+                    },
+                    "id": {
+                        "type": "string",
+                        "description": "The workflow instance ID. The ID is at least 36 characters long.",
+                        "minLength": 36,
+                        "maxLength": 255
+                    },
+                    "startedAt": {
+                        "format": "date-time",
+                        "type": "string",
+                        "description": "The time when the workflow instance started."
+                    },
+                    "startedBy": {
+                        "type": "string",
+                        "description": "The user who started the workflow instance. The user ID is at most 255 characters long.",
+                        "maxLength": 255
+                    },
+                    "completedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "The time when the workflow instance status changed to COMPLETED."
+                    },
+                    "status": {
+                        "enum": [
+                            "RUNNING",
+                            "ERRONEOUS",
+                            "SUSPENDED",
+                            "CANCELED",
+                            "COMPLETED"
+                        ],
+                        "type": "string",
+                        "description": "The status of the workflow instance. The status values as returned by this API have the following corresponding terms in user interfaces of SAP Build Process Automation:\n* RUNNING - Running\n* ERRONEOUS - Error\n* SUSPENDED - On Hold\n* CANCELED - Canceled\n* COMPLETED - Completed"
+                    },
+                    "businessKey": {
+                        "type": "string",
+                        "description": "The business key of the workflow instance. The business key of a workflow instance is limited to 255 characters.",
+                        "maxLength": 255
+                    },
+                    "subject": {
+                        "type": "string",
+                        "description": "The subject of the workflow instance. The subject of a workflow instance is limited to 255 characters.",
+                        "maxLength": 255
+                    },
+                    "rootInstanceId": {
+                        "type": "string",
+                        "description": "The workflow root instance ID. The root ID is at least 36 characters long.",
+                        "minLength": 36,
+                        "maxLength": 255
+                    },
+                    "parentInstanceId": {
+                        "type": "string",
+                        "description": "The workflow parent instance ID. The parent ID can be null or at least 36 characters long.",
+                        "maxLength": 255
+                    },
+                    "projectId": {
+                        "type": "string",
+                        "description": "The project ID  of the SAP Build Process Automation project to which workflowinstance belongs to. It has the format of region.subaccount.projectName. The projectid is limited to 255 characters.",
+                        "maxLength": 255
+                    },
+                    "projectVersion": {
+                        "type": "string",
+                        "description": "The project version of SAP Build Process Automation project to which workflowinstance belongs to. The projectversion is limited to 64 characters.",
+                        "maxLength": 64
+                    }
+                }
+            }
+        }
+    },
+    "paths": {
+        "/workflow/rest/v1/workflow-instances": {
+            "post": {
+                "summary": "Starts a new workflow instance.",
+                "description": "Starts a new workflow instance of the provided workflow definition. Specify the ID of the workflow definition in the body.\nThe workflow instance automatically starts based on the latest deployed version of the definition.",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "title": "WorkflowInstanceStartRequest",
+                                "properties": {
+                                    "definitionId": {
+                                        "type": "string",
+                                        "example": "us10.bd31c2a7trial.salesorderapproval.salesOrderApproval",
+                                        "description": "Specify the ID of the workflow definition for which an instance should be started. The ID is at most 255 characters long."
+                                    },
+                                    "context": {
+                                        "type": "object",
+                                        "properties": {
+                                            "orderid": {
+                                                "type": "string",
+                                                "title": "orderID",
+                                                "description": "order ID"
+                                            },
+                                            "mail": {
+                                                "type": "string",
+                                                "title": "mail",
+                                                "description": "Mail"
+                                            }
+                                        },
+                                        "required": [
+                                            "orderid",
+                                            "mail"
+                                        ],
+                                        "$schema": "http://json-schema.org/draft-07/schema#"
+                                    }
+                                },
+                                "required": [
+                                    "definitionId"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "parameters": [],
+                "responses": {
+                    "201": {
+                        "description": "Returns the newly created workflow instance.\nNote that subject and businessKey are 'null' and are evaluated after the workflow instance was started.\nIf the process has a start event output mapping, the two attributes are evaluated based on the result of the mapping.\nIf the process does not have a start event output mapping, the attributes are evaluated based on the payload that was sent in the request.\nTo receive these values, query the instance by ID after the mapping is done.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WorkflowInstance"
+                                },
+                                "example": {
+                                    "id": "13",
+                                    "definitionId": "LeaveRequestWorkflow",
+                                    "definitionVersion": "2",
+                                    "subject": "Leave Request for Alice",
+                                    "businessKey": "s021445",
+                                    "status": "RUNNING",
+                                    "startedAt": "2016-11-01T19:59:59.000Z",
+                                    "startedBy": "Alice",
+                                    "completedAt": null,
+                                    "rootInstanceId": "13",
+                                    "parentInstanceId": null,
+                                    "projectId": "spaprojectid",
+                                    "projectVersion": "1.0.1"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Incorrect format or structure of the provided request body.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TechnicalError"
+                                },
+                                "example": {
+                                    "error": {
+                                        "code": "bpm.workflowruntime.rest.content.format.invalid",
+                                        "message": "Unable to parse the request content because it has an unexpected format or structure. The content has to be JSON and follow the documented data structure.",
+                                        "logId": "e329b2a4-cac7-44d7-b5c5-0494e6fbad5a"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized. You have not provided valid authentication credentials to access the resource.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                },
+                                "example": {
+                                    "error": "unauthorized",
+                                    "error_description": "Full authentication is required to access this resource."
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Access forbidden. You have not the required permissions to access the resource.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TechnicalError"
+                                },
+                                "example": {
+                                    "error": {
+                                        "message": "User does not have sufficient privileges."
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Workflow definition not found. Either the payload does not contain a definitionId property or the specified ID is incorrect.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TechnicalError"
+                                },
+                                "example": {
+                                    "error": {
+                                        "code": "bpm.workflowruntime.rest.definition.not.found",
+                                        "message": "Workflow definition not found",
+                                        "logId": "1c4daaf5-eb3f-4ff5-8b13-aa32a47bb07d"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "The workflow context in the request body contains invalid keys or values.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TechnicalError"
+                                },
+                                "example": {
+                                    "error": {
+                                        "code": "bpm.workflowruntime.rest.instance.context.invalid",
+                                        "message": "Workflow context could not be set because it contained errors.",
+                                        "logId": "89462226-6b9e-4cd3-9bea-533cc267e2a4"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "You have reached the usage limits that are configured for your tenant.\nYou are performing too many requests or consume too many resources.\n",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TechnicalError"
+                                },
+                                "example": {
+                                    "error": {
+                                        "code": "bpm.workflowruntime.rate.limit.exceeded",
+                                        "message": "Your tenant is performing too many requests."
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. The operation you requested led to an error during execution.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TechnicalError"
+                                },
+                                "example": {
+                                    "error": {
+                                        "code": "bpm.workflowruntime.rest.internal.server.error",
+                                        "message": "Internal server error",
+                                        "logId": "f29a5719-3342-4a4a-8a3d-5ddd5253159e"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

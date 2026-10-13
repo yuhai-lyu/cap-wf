@@ -1,0 +1,31 @@
+# Generated manifest.yml based on template version 0.1.0
+# appName = bookshop-workflow
+# language=nodejs
+# multitenancy=
+---
+applications:
+# -----------------------------------------------------------------------------------
+# HANA Database Content Deployer App
+# -----------------------------------------------------------------------------------
+- name: bookshop-workflow-db-deployer
+  path: gen/db
+  no-route: true
+  health-check-type: process
+  memory: 256M
+  instances: 1
+  buildpack: nodejs_buildpack
+  services:
+  - bookshop-workflow-db
+
+# -----------------------------------------------------------------------------------
+# Backend Service
+# -----------------------------------------------------------------------------------
+- name: bookshop-workflow-srv
+  random-route: true  # for development only
+  path: .  # the project root is pushed so the UI5 app in app/ is served by cds-plugin-ui5
+  memory: 256M
+  buildpack: nodejs_buildpack
+  env:
+    NODE_ENV: production
+  services:
+  - bookshop-workflow-db

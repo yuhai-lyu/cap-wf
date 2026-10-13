@@ -1,0 +1,59 @@
+{
+  "_version": "1.49.0",
+  "sap.app": {
+    "id": "sap.cap.demo.bookshop",
+    "type": "application",
+    "title": "Bookshop",
+    "applicationVersion": { "version": "1.0.0" },
+    "dataSources": {
+      "mainService": {
+        "uri": "/bookshop/",
+        "type": "OData",
+        "settings": { "odataVersion": "4.0" }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "deviceTypes": { "desktop": true, "tablet": true, "phone": true }
+  },
+  "sap.ui5": {
+    "rootView": {
+      "viewName": "sap.cap.demo.bookshop.view.App",
+      "type": "XML",
+      "async": true,
+      "id": "app"
+    },
+    "dependencies": {
+      "minUI5Version": "1.120.0",
+      "libs": { "sap.m": {}, "sap.ui.core": {}, "sap.ui.layout": {} }
+    },
+    "models": {
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": { "operationMode": "Server", "autoExpandSelect": true, "earlyRequests": true }
+      }
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "viewType": "XML",
+        "viewPath": "sap.cap.demo.bookshop.view",
+        "controlId": "app",
+        "controlAggregation": "pages",
+        "async": true
+      },
+      "routes": [
+        { "pattern": "", "name": "books", "target": "books" },
+        { "pattern": "order", "name": "order", "target": "order" },
+        { "pattern": "orders", "name": "orders", "target": "orders" }
+      ],
+      "targets": {
+        "books": { "viewName": "Books" },
+        "order": { "viewName": "Order" },
+        "orders": { "viewName": "Orders" }
+      }
+    }
+  }
+}
